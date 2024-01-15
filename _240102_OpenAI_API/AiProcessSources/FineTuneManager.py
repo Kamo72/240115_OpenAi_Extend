@@ -40,7 +40,6 @@ class FineTuneManager () :
         # lecture : str => modelName : str
         self.modelLib : dict[str,  str] = {}
         
-
         user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
         saveDirectory = "WB38\\Lectures"
         self.rootPath = f"{user_documents_path}\\{saveDirectory}"
@@ -252,25 +251,28 @@ class FineTuneManager () :
     def StartFineTuneJob(self, lectureName : str) :
         try :
             printProcess(f"'{lectureName}' 과목의 자가 학습을 준비 중입니다...")
+            
+            if self.__CheckFineTuneAvailable__(lectureName) == False : 
+                printError(f"'{lectureName}' 과목의 이미 진행중인 파인튜닝 작업이 있어 파인튜닝을 시작하지 못했습니다.")
+                return
+            
+            # 미처 끝나지 않은 데이터셋 정제작업을 마친다.
+            self.__MakeDataSetWhole__(lectureName);
+
+            # 머지데이터 생성 
+            self.__MergeDataSet__(lectureName)
         
-            #머지데이터 생성 
-            self.__MergeDataSet__("C# 프로그래밍")
-        
-            #머지데이터 업로드
-            fo : FileObject = self.pm.api.UploadFile("C# 프로그래밍")
-         
-            #파인튜닝 시작
+            # 머지데이터 업로드
+            fo : FileObject = self.pm.api.UploadFile(lectureName)
+                
+            # 파인튜닝 시작
             ftj : FineTuningJob = openai.fine_tuning.jobs.create(model = "gpt-3.5-turbo-1106", training_file = fo.id)
         
-            # 콜백 정의
-       
-        
-            #파인튜닝 작업 추적 스레드 생성
+            # 파인튜닝 작업 추적 스레드 생성
             thread_unit : threading.Thread = threading.Thread(target = self.__threadFineTuneJob__, args = (lectureName, ftj,  self.__FineTuneJobCallback__))
             thread_unit.start()
             printProcess(f"'{lectureName}' 과목의 자가 학습을 시작합니다.")
         
-
             # 파인튜닝 작업 세이브포인트 생성
             self.__MakeFineTuneCheckPoint__(lecture=lectureName, ft= ftj)
             
@@ -281,13 +283,14 @@ class FineTuneManager () :
     # 파인튜닝 스레드
     def __threadFineTuneJob__(self, lectureName : str, ftJobData : FineTuningJob,  callback) : 
         
+        printProcess(f"'{lectureName}' 과목의 파인튜닝 스레드가 생성됐습니다.")
+        
         ft : FineTuningJob
         
+        from _240102_OpenAI_API._240102_OpenAI_API.AiProcessSources.ProcessManager import p1, p2
         while True :
-            from _240102_OpenAI_API._240102_OpenAI_API.AiProcessSources.ProcessManager import p1, p2
             try :
-                printProcess(f"'{lectureName}' 과목의 자가 학습이 진행 중입니다.")
-            
+                
                 # 파인튜닝 과정 중 정보를 가져온다.
                 ft = openai.fine_tuning.jobs.retrieve(ftJobData.id)
             
@@ -325,7 +328,7 @@ class FineTuneManager () :
             sleep(10.)
         
         # 결과 반환
-        callback(ft.fine_tuned_model, lectureName)
+        callback(lectureName, ft.fine_tuned_model)
     
     # 파인튜닝 스레드 콜백
     def __FineTuneJobCallback__ (self, lectureName, modelName) : 
@@ -460,6 +463,50 @@ class FineTuneManager () :
         with open(dataSetPath, "w", encoding = "utf-8") as json_file:
             json_file.write(json.dumps(dataSet, ensure_ascii=False))
     
+    # 과목 안의 미처 완료되지 않은 모든 로우 데이터를 정제한다.
+    def __MakeDataSetWhole__(self, lecture : str) :
+        printProcess("미처 완료되지 않은 로우데이터를 찾습니다.")  
+        
+        resultList = []      
+        
+        try :
+            lecPath = self.__lectureToPath__(lecture)
+            rawPath = lecPath + r"\RAW_DATA"
+            trainPath = lecPath + r"\TRAINING_DATA"
+            
+            rawList = []
+            for filename in os.listdir(rawPath):
+                if os.path.isfile(os.path.join(rawPath, filename)):
+                    file_name_without_extension, _ = os.path.splitext(filename)
+                    rawList.append(file_name_without_extension)
+                    
+            trainList = []
+            for filename in os.listdir(trainPath):
+                if os.path.isfile(os.path.join(trainPath, filename)):
+                    file_name_without_extension, _ = os.path.splitext(filename)
+                    trainList.append(file_name_without_extension)
+
+            tempList = []
+            for element in rawList:
+                if element not in trainList:
+                    tempList.append(element)
+                    
+            for fileName in tempList :
+                resultList.append(f"{rawPath}\{fileName}.txt")
+                
+        except Exception as  ex:
+            print(ex);
+            
+
+        try : 
+            print("[result]" + str(resultList))
+            
+            for txtFile in resultList :
+                self.__MakeDataSet__(lecture, txtFile)
+                
+        except Exception as ex :
+            print(ex);
+
     # 해당 강좌의 모든 데이터셋을 하나로 합쳐 업로드를 준비합니다. json, json... > jsonl
     def __MergeDataSet__(self, lecture : str) : 
         
@@ -524,12 +571,6 @@ class FineTuneManager () :
             saveDirectory = "WB38"
             cpPath = f"{user_documents_path}\\{saveDirectory}\\finetune_checkpoint.json"
             
-            if not os.path.exists(cpPath) :
-                with open(cpPath, "w", encoding="utf-8") as jsonFile :
-                    json.dump([], jsonFile, ensure_ascii=False)
-                return;
-            
-            
             # 세이브 포인트 로드
             dataPre : list
             with open(cpPath, "r", encoding="utf-8") as jsonFile :
@@ -546,22 +587,18 @@ class FineTuneManager () :
             for data in  dataPre : # 세이브포인트 순회
             
                 lecture : str = data["lecture"]
-                ftId : str = data["fineTuneJob"]
-            
+                ftId : str = data["fineTuneJob"] 
+                
                 for ftJob in ftJobs : # 파인튜닝 잡 순회
                     if(ftJob.id == ftId) :  # 세이브포인트와 일치
-                        if(ftJob.status in ["failed", "cancelled"]) : #유효하지 않은 파인튜닝 잡
-                            printError(f"'{lecture}' 과목의 세이브포인트를 불러오는데 실패했습니다. state : {ftJob.status}")
+                        if(ftJob.status in ["failed", "cancelled", "succeeded"]) : #유효하지 않은 파인튜닝 잡
                             break;
         
                         #파인튜닝 작업 추적 스레드 생성
                         thread_unit : threading.Thread = threading.Thread(target = self.__threadFineTuneJob__, args = (lecture, ftJob, self.__FineTuneJobCallback__))
                         thread_unit.start()
                         printSucceed(f"'{lecture}' 과목의 자가 학습 세이브포인트를 불러왔습니다!")
-            
-            # with open(cpPath, "w", encoding="utf-8") as jsonFile :
-            #     json.dump([], jsonFile, ensure_ascii=False)
-                
+                        
         except FileNotFoundError as ex :
             printWarning(f" finetune_checkpoint.json 파일이 존재하지 않습니다. 새로 생성합니다. ")
             with open(cpPath, "w", encoding="utf-8") as jsonFile :
@@ -570,3 +607,43 @@ class FineTuneManager () :
         except Exception as ex : 
             printError(f"__LoadFineTuneCheckPoint__ 실행 중 오류발생. {ex}\n{ex.with_traceback.format_exc()}")
                
+    # 파인튜닝 가능한지 체크
+    def __CheckFineTuneAvailable__(self, lectureName : str) :
+        try : 
+            user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
+            saveDirectory = "WB38"
+            cpPath = f"{user_documents_path}\\{saveDirectory}\\finetune_checkpoint.json"
+            
+            # 세이브 포인트 로드
+            cpList : list
+            with open(cpPath, "r", encoding="utf-8") as jsonFile :
+                cpList = json.load(jsonFile)
+        
+            # API의 진행중인 잡들을 로드
+            from ApiManager import OpenAiManagerV2 
+            api : OpenAiManagerV2 = self.pm.api;
+            ftData, files = api.GetFineTuneData()
+            ftJobs : list[FineTuningJob] = ftData.data
+    
+            # 세이브 포인트들을 순회하며 진행중인 잡들을 확인
+
+            for cp in  cpList : # 세이브포인트 순회
+            
+                cpLecture : str = cp["lecture"]
+                cpId : str = cp["fineTuneJob"]
+            
+                for ftJob in ftJobs : # 파인튜닝 잡 순회
+                    if(ftJob.id == cpId and lectureName == cpLecture) :  # 세이브포인트에 저장된 과목과 내 과목이 일치
+                        if ftJob.status in ["validating_files", "queued", "running"] : #진행중이라면 
+                            return False;
+            
+            return True
+        
+        except FileNotFoundError as ex :
+            printWarning(f" finetune_checkpoint.json 파일이 존재하지 않습니다. 새로 생성합니다. ")
+            with open(cpPath, "w", encoding="utf-8") as jsonFile :
+                json.dump([], jsonFile, ensure_ascii=False)
+            
+        except Exception as ex : 
+            printError(f"__CheckFineTuneAvailable__ 실행 중 오류발생. {ex}\n{ex.with_traceback.format_exc()}")
+                

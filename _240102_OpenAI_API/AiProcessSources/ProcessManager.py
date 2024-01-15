@@ -204,5 +204,12 @@ class ProcessManager() :
         # self.api.InitRequest(4, "C# 프로그래밍", "C#의 주석 기능에 대해 설명해줘.",
         #                      lambda sid, lecture, response : print(f"[{str(sid)}번 사용자의 '{lecture}' 과목에 대한 질문에 대한 응답] : {response}"))
 
-pm : ProcessManager = ProcessManager(SessionManagerV2(), OpenAiManagerV2(), FineTuneManager())
-del pm;
+if __name__ == "__main__":
+    pm : ProcessManager = ProcessManager(SessionManagerV2(), OpenAiManagerV2(), FineTuneManager())
+    # pm.ft.StartFineTuneJob("C# 프로그래밍")
+    # print(pm.ft.__CheckFineTuneAvailable__("C# 프로그래밍"))
+    # print(pm.ft.__CheckFineTuneAvailable__("박상한의 케로로학"))
+    while True : sleep(1.)
+
+
+

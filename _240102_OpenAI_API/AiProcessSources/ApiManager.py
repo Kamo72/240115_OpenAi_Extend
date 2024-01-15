@@ -1,4 +1,5 @@
 # -*- coding: cp949 -*-
+from email.mime import nonmultipart
 import json,os, threading
 from time import sleep
 
@@ -389,16 +390,23 @@ class OpenAiManagerV2 :
    
     # openai api에 파일 업로드
     def UploadFile(self, lecture) : 
-
-        user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
-        saveDirectory = "WB38\\Lectures"
-        path = rf"{user_documents_path}\{saveDirectory}\{lecture}\MERGED_DATASET\{lecture}_MERGED.jsonl"        
-
-        fo : FileObject = openai.files.create(
-            file = open(path, "rb"),
-            purpose = "fine-tune"
-        )
-        return fo
+        try :
+            user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
+            saveDirectory = "WB38\\Lectures"
+            path = rf"{user_documents_path}\{saveDirectory}\{lecture}\MERGED_DATASET\{lecture}_MERGED.jsonl"        
+        
+            printProcess(f"{lecture} 과목의 통합 데이터를 업로드합니다... Path : {path}")
+            fo : FileObject = openai.files.create(
+                file = open(path, "rb"),
+                purpose = "fine-tune"
+            )
+            printProcess(f"{lecture} 과목의 통합 데이터를 업로드를 완료했습니다!")
+            
+            return fo
+        
+        except Exception as ex :
+            print(ex);
+            return None
 
     # 진행중인 파인 튜닝 잡과 업로드된 파일들을 조회
     def GetFineTuneData(self) : 
