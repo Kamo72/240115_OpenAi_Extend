@@ -91,7 +91,6 @@ class AiModuleProcess():
                         printError(f"'{path}' PDF파일을 '{lecture}'과목에 업로드하는데 실패했습니다.")
                 
                 case "SendDataWav":
-<<<<<<< HEAD
                     ssp = sp[1].split(p2)
                     isSucceed = True if ssp[0] == str(True) else False
                     lecture = ssp[1]
@@ -101,9 +100,6 @@ class AiModuleProcess():
                         printSucceed(f"성공적으로 '{path}' 음성 파일을 '{lecture}'과목을 업로드했습니다.")
                     else:
                         printError(f"'{path}' 음성 파일을 '{lecture}'과목에 업로드하는데 실패했습니다.")
-=======
-                    printError(f"SendDataWav이 아직 구현되지 않았습니다. recieve : {packet}")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 
                 case "SendDataTxt": 
                     ssp = sp[1].split(p2)
@@ -351,7 +347,6 @@ class AiModuleProcess():
         server = self.server;
         
         server.Send(f"SendDataTxt{p1}{lecture}{p2}{path}")
-<<<<<<< HEAD
         
     def DoSendDataWav(self, lecture : str, path : str) :
         # 기타 변수들을 짧게 처리
@@ -360,8 +355,6 @@ class AiModuleProcess():
         server = self.server;
         
         server.Send(f"SendDataWav{p1}{lecture}{p2}{path}")
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     
     def DoFineTuneCreate(self, lecture : str) :
         # 기타 변수들을 짧게 처리

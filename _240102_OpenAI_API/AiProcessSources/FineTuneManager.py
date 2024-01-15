@@ -1,8 +1,5 @@
 # -*- coding: cp949 -*-
-<<<<<<< HEAD
 from distutils import extension
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 import json
 import os, shutil, sys
 import threading
@@ -17,10 +14,7 @@ from openai.types import FileObject, FineTune
 from openai.types.fine_tuning import FineTuningJob
 
 from Addon.PdfConverter import Pdf2TextConverter;
-<<<<<<< HEAD
 from Addon.SpeechToTextConverter import SpeechToTextConverter;
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
 from datetime import datetime
 import pytz
@@ -417,7 +411,6 @@ class FineTuneManager () :
             printError(f"로우 데이터 추가 중, 오류 발생: {pdfFilePath} - {e}")
             return False;
         
-<<<<<<< HEAD
     # wav > txt
     def AddWavData(self, lecture : str, wavFilePath : str) : 
         try:
@@ -447,8 +440,6 @@ class FineTuneManager () :
         except Exception as e:
             printError(f"로우 데이터 추가 중, 오류 발생: {wavFilePath} - {e}")
             return False;
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
   
          
     # 가져온 로우 데이터로 GPT 를 사용해 학습 데이터로 만듭니다. txt > json
@@ -533,6 +524,12 @@ class FineTuneManager () :
             saveDirectory = "WB38"
             cpPath = f"{user_documents_path}\\{saveDirectory}\\finetune_checkpoint.json"
             
+            if not os.path.exists(cpPath) :
+                with open(cpPath, "w", encoding="utf-8") as jsonFile :
+                    json.dump([], jsonFile, ensure_ascii=False)
+                return;
+            
+            
             # 세이브 포인트 로드
             dataPre : list
             with open(cpPath, "r", encoding="utf-8") as jsonFile :
@@ -562,8 +559,8 @@ class FineTuneManager () :
                         thread_unit.start()
                         printSucceed(f"'{lecture}' 과목의 자가 학습 세이브포인트를 불러왔습니다!")
             
-            with open(cpPath, "w", encoding="utf-8") as jsonFile :
-                json.dump([], jsonFile, ensure_ascii=False)
+            # with open(cpPath, "w", encoding="utf-8") as jsonFile :
+            #     json.dump([], jsonFile, ensure_ascii=False)
                 
         except FileNotFoundError as ex :
             printWarning(f" finetune_checkpoint.json 파일이 존재하지 않습니다. 새로 생성합니다. ")

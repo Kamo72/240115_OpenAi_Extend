@@ -2,11 +2,8 @@
 import hashlib
 import ctypes
 import sys
-<<<<<<< HEAD
 import threading
 from time import sleep
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
 from ApiManager import OpenAiManagerV2
 from SessionManager import SessionManagerV2
@@ -46,11 +43,7 @@ class ProcessManager() :
         ctypes.windll.kernel32.SetConsoleTitleW("AiEnviormentTerminal")
         
         # 클라이언트 생성
-<<<<<<< HEAD
         self.client : Client = Client("127.0.0.1", 4090, self.__ClientDel__)
-=======
-        self.client : Client = Client("127.0.0.1", 4090, self.__ClientDel)
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     
         # 클라이언트 연결
         self.client.Connect()
@@ -58,11 +51,7 @@ class ProcessManager() :
         # 클라이언트가 입력 받을 준비가 되었다고 전송
         self.client.Send(f"ProcessStart{p1}")
         
-<<<<<<< HEAD
     def __ClientDel__(self, packet) :
-=======
-    def __ClientDel(self, packet) :
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         
         sp = packet.split(p1)
         flag = sp[0]
@@ -108,7 +97,6 @@ class ProcessManager() :
                     self.client.Send(f"SendDataPdf{p1}{str(ret)}{p2}{lecture}{p2}{path}")
                 
                 case "SendDataWav":
-<<<<<<< HEAD
                     ssp = sp[1].split(p2)
                     lecture = ssp[0]
                     path = ssp[1]
@@ -121,9 +109,6 @@ class ProcessManager() :
                     tu = threading.Thread(target=thr);
                     tu.start();
                 
-=======
-                    printError(f"SendDataWav이 아직 구현되지 않았습니다. recieve : {packet}")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 
                 case "SendDataTxt": 
                     ssp = sp[1].split(p2)
@@ -220,24 +205,4 @@ class ProcessManager() :
         #                      lambda sid, lecture, response : print(f"[{str(sid)}번 사용자의 '{lecture}' 과목에 대한 질문에 대한 응답] : {response}"))
 
 pm : ProcessManager = ProcessManager(SessionManagerV2(), OpenAiManagerV2(), FineTuneManager())
-<<<<<<< HEAD
-pm.__ClientDel__(rf"SendDataWav{p1}C# 프로그래밍{p2}C:\Users\skyma\Downloads\녹음.flac")
-sleep(1.)
-pm.__ClientDel__(rf"SendDataWav{p1}C# 프로그래밍{p2}C:\Users\skyma\Downloads\녹음.flac")
-sleep(1.)
-pm.__ClientDel__(rf"SendDataWav{p1}C# 프로그래밍{p2}C:\Users\skyma\Downloads\녹음.flac")
-sleep(1.)
-
 del pm;
-
-
-# from Addon.SpeechToTextConverter import SpeechToTextConverter
-# sttc = SpeechToTextConverter();
-
-# ret = sttc.upload_file(r"C:\Users\skyma\Downloads\녹음.flac") 
-# print(ret)
-# ret = sttc.transcribe_gcs(ret)
-# print(ret)
-=======
-del pm;
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
