@@ -1,43 +1,26 @@
-<<<<<<< HEAD
-Ôªø# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from distutils import extension
-=======
-# -*- coding: cp949 -*-
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 import json
 import os, shutil, sys
 import threading
 from time import sleep
 import time
 from httpx import Headers
-<<<<<<< HEAD
 
 import openai
 from openai import OpenAI
 from openai.pagination import SyncCursorPage, SyncPage
-=======
-from openai import OpenAI
-import openai
-from openai.pagination import SyncCursorPage, SyncPage
-
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 from openai.types import FileObject, FineTune
 from openai.types.fine_tuning import FineTuningJob
 
 from Addon.PdfConverter import Pdf2TextConverter;
-<<<<<<< HEAD
 from Addon.SpeechToTextConverter import SpeechToTextConverter;
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
 from datetime import datetime
 import pytz
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 def dirUp(dire , times) :
     return dirUp(os.path.dirname(dire), times-1) if times >0 else dire
 
@@ -58,49 +41,32 @@ class FineTuneManager () :
         # lecture : str => modelName : str
         self.modelLib : dict[str,  str] = {}
         
-<<<<<<< HEAD
         self.imageData : dict[str, dict[str,  str]] = {}
         
         self.uploadingCount : dict[str, int] = {}
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
         user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
         saveDirectory = "WB38\\Lectures"
         self.rootPath = f"{user_documents_path}\\{saveDirectory}"
         
         
-<<<<<<< HEAD
     # ÏÉàÎ°úÏö¥ Í∞ïÏ¢åÎ•º ÎßåÎì≠ÎãàÎã§.
-=======
-    # ªı∑ŒøÓ ∞≠¡¬∏¶ ∏∏µÏ¥œ¥Ÿ.
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def LecturesCreate(self, lecture : str) : 
         
         lecPath = self.__lectureToPath__(lecture=lecture)
         
-<<<<<<< HEAD
         # Ïù¥ÎØ∏ Ï°¥Ïû¨ÌïòÎ©¥ ÏÉùÏÑ± Î∂àÍ∞Ä
         if os.path.exists(lecPath) :
             printError(f"{lecture} Í≥ºÎ™©ÏùÄ Ïù¥ÎØ∏ Ï°¥Ïû¨ÌïòÍ∏∞ ÎïåÎ¨∏Ïóê ÏÉùÏÑ±Ìï† Ïàò ÏóÜÏäµÎãàÎã§.")
             return False
         
         # ÎîîÎ†âÌÜ†Î¶¨ ÏÉùÏÑ±
-=======
-        # ¿ÃπÃ ¡∏¿Á«œ∏È ª˝º∫ ∫“∞°
-        if os.path.exists(lecPath) :
-            printError(f"{lecture} ∞˙∏Ò¿∫ ¿ÃπÃ ¡∏¿Á«œ±‚ ∂ßπÆø° ª˝º∫«“ ºˆ æ¯Ω¿¥œ¥Ÿ.")
-            return False
-        
-        # µ∑∫≈‰∏Æ ª˝º∫
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         os.makedirs(lecPath)
         os.makedirs(lecPath + r"\\RAW_DATA");
         os.makedirs(lecPath + r"\\TRAINING_DATA");
         os.makedirs(lecPath + r"\\MERGED_DATASET");
         
         
-<<<<<<< HEAD
         # ÏûêÎ£åÍµ¨Ï°∞Ïóê Ï†ÄÏû•
         self.trainedTree[lecture] = list[str]();
         self.trainingTree[lecture] = list[str]();
@@ -113,54 +79,28 @@ class FineTuneManager () :
             "modelName": None,
             "trainedList" : [],
             "imageData" : {}
-=======
-        # ¿⁄∑·±∏¡∂ø° ¿˙¿Â
-        self.trainedTree[lecture] = list[str]();
-        self.trainingTree[lecture] = list[str]();
-        self.modelLib[lecture] = None;
-        
-        # lecture_info.json ª˝º∫
-        lectureData = {
-            "modelName": None,
-            "trainedList" : []
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         }
         
         with open(rf"{lecPath}\lecture_info.json", "w") as json_file:
             json.dump(lectureData, json_file)
             
-<<<<<<< HEAD
         printSucceed(f"ÏÑ±Í≥µÏ†ÅÏúºÎ°ú '{lecture}'Î•º ÏÉùÏÑ±ÌïòÎäîÎç∞ ÏÑ±Í≥µÌñàÏäµÎãàÎã§.")
         return True;
     
     # Í∏∞Ï°¥ Í∞ïÏ¢åÎ•º ÏÇ≠Ï†úÌï©ÎãàÎã§.
-=======
-        printSucceed(f"º∫∞¯¿˚¿∏∑Œ '{lecture}'∏¶ ª˝º∫«œ¥¬µ• º∫∞¯«ﬂΩ¿¥œ¥Ÿ.")
-        return True;
-    
-    # ±‚¡∏ ∞≠¡¬∏¶ ªË¡¶«’¥œ¥Ÿ.
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def LecturesDelete(self, lecture : str) :
         
         lecPath = self.__lectureToPath__(lecture=lecture)
         if not os.path.exists(lecPath):
-<<<<<<< HEAD
             printError(f"Ï°¥Ïû¨ÌïòÏßÄ ÏïäÎäî Í≥ºÎ™© '{lecPath}'ÏùÑ ÏÇ≠Ï†úÌïòÎ†§Í≥† ÏãúÎèÑÌïòÍ≥† ÏûàÏäµÎãàÎã§.")
             return False
             
         # ÎîîÎ†âÌÜ†Î¶¨ ÏÇ≠Ï†ú(ÎÇ¥Î∂ÄÏùò ÌååÏùºÍπåÏßÄ Î™®Îëê ÏÇ≠Ï†úÌï®)
-=======
-            printError(f"¡∏¿Á«œ¡ˆ æ ¥¬ ∞˙∏Ò '{lecPath}'¿ª ªË¡¶«œ∑¡∞Ì Ω√µµ«œ∞Ì ¿÷Ω¿¥œ¥Ÿ.")
-            return False
-            
-        # µ∑∫≈‰∏Æ ªË¡¶(≥ª∫Œ¿« ∆ƒ¿œ±Ó¡ˆ ∏µŒ ªË¡¶«‘)
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         shutil.rmtree(lecPath)
         
         del self.trainingTree[lecture]
         del self.trainedTree[lecture]
         del self.modelLib[lecture]
-<<<<<<< HEAD
         printSucceed(f"ÏÑ±Í≥µÏ†ÅÏúºÎ°ú '{lecture}'Î•º ÏÇ≠Ï†úÌïòÎäîÎç∞ ÏÑ±Í≥µÌñàÏäµÎãàÎã§.")
         
         return True
@@ -176,39 +116,18 @@ class FineTuneManager () :
             self.uploadingCount : dict[str, int] = {};
         
             # Î™®Îì† Í≥ºÎ™© ÎîîÎ†âÌÜ†Î¶¨Ïóê Ï†ëÍ∑º
-=======
-        printSucceed(f"º∫∞¯¿˚¿∏∑Œ '{lecture}'∏¶ ªË¡¶«œ¥¬µ• º∫∞¯«ﬂΩ¿¥œ¥Ÿ.")
-        
-        return True
-
-    # ∞≠¿«µÈ ∑ŒµÂ
-    def LecturesLoad(self) : 
-        try :
-            # ¿˙¿Â¿⁄∑· √ ±‚»≠
-            self.trainingTree : dict[str,  list[str]] = {}
-            self.trainedTree : dict[str,  list[str]] = {}
-            self.modelLib : dict[str,  str] = {}
-        
-            # ∏µÁ ∞˙∏Ò µ∑∫≈‰∏Æø° ¡¢±Ÿ
-
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             tPath = self.rootPath;
             directories = [item for item in os.listdir(tPath) if os.path.isdir(os.path.join(tPath, item))]
 
             for lecture in directories:
                 full_path = os.path.join(self.rootPath, lecture)
                 
-<<<<<<< HEAD
                 # lecture_infoÎ•º ÏùΩÏñ¥Ïò§Í∏∞
-=======
-                # lecture_info∏¶ ¿–æÓø¿±‚
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 with open(rf"{full_path}\lecture_info.json", "r") as json_file:
                     data = json.load(json_file)
                     
                     self.modelLib[lecture] = data["modelName"];
                     self.trainedTree[lecture] = data["trainedList"]
-<<<<<<< HEAD
                     self.uploadingCount[lecture] = 0
                     
                     if "imageData" in data :
@@ -216,15 +135,11 @@ class FineTuneManager () :
                     else : 
                         self.imageData[lecture] = {}
                         
-=======
-                    
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                     self.trainingTree[lecture] = list[str]()
 
                 ttPath = full_path + "\\TRAINING_DATA";
                 files = [item for item in os.listdir(ttPath) if os.path.isfile(os.path.join(ttPath, item))]                
 
-<<<<<<< HEAD
                 # lecture TRAINING_DATAÎ•º ÏùΩÏñ¥Ïò§Í∏∞
                 for file_path in files:
                         
@@ -240,32 +155,11 @@ class FineTuneManager () :
         except Exception as ex :
             printError(f"Í≥ºÎ™© Î°úÎìúÍ∞Ä Ïã§Ìå®ÌñàÏäµÎãàÎã§. ÏÉÅÏÑ∏ Ï†ïÎ≥¥ : {ex}")
             input("Îçî Ïù¥ÏÉÅÏùò ÏßÑÌñâÏùÄ ÏúÑÌóòÌïòÎØÄÎ°ú, ÌîÑÎ°úÏÑ∏Ïä§Î•º Ï†ïÏßÄÌï©ÎãàÎã§.")
-=======
-                # lecture TRAINING_DATA∏¶ ¿–æÓø¿±‚
-                for file_path in files:
-                        
-                    # MERGED_DATASET¿∫ øπø‹
-                    if self.trainingTree[lecture].__contains__(file_path) : continue;
-                        
-                    # √£¿∫ ∆Æ∑π¿Ã¥◊ µ•¿Ã≈Õ ∞Ê∑Œ∏¶ ¿˙¿Â
-                    self.trainingTree[lecture].append(file_path)
-                            
-            printSucceed(f"∞˙∏Ò ¡§∫∏ ∑ŒµÂø° º∫∞¯«ﬂΩ¿¥œ¥Ÿ. \n«–Ω¿ øπ¡§ ¿⁄∑· : \n{self.trainingTree}\n«–Ω¿ øœ∑· ¿⁄∑· : \n{self.trainedTree}\n∏µ® : \n{self.modelLib}")
-            return True;
-    
-        except Exception as ex :
-            printError(f"∞˙∏Ò ∑ŒµÂ∞° Ω«∆–«ﬂΩ¿¥œ¥Ÿ. ªÛºº ¡§∫∏ : {ex}")
-            input("¥ı ¿ÃªÛ¿« ¡¯«‡¿∫ ¿ß«Ë«œπ«∑Œ, «¡∑ŒººΩ∫∏¶ ¡§¡ˆ«’¥œ¥Ÿ.")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             exit()
             
             return False;
     
-<<<<<<< HEAD
     # Í∞ïÏùòÎì§ Ï†ÄÏû•
-=======
-    # ∞≠¿«µÈ ¿˙¿Â
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def LecturesSave(self) : 
         tPath = self.rootPath;
         directories = [item for item in os.listdir(tPath) if os.path.isdir(os.path.join(tPath, item))]
@@ -274,7 +168,6 @@ class FineTuneManager () :
             full_path = os.path.join(self.rootPath, lecture)
                     
             lectureData = {
-<<<<<<< HEAD
                 "modelName"   : self.modelLib[lecture],
                 "trainedList" : self.trainedTree[lecture],
                 "imageData"   : self.imageData[lecture]
@@ -285,31 +178,15 @@ class FineTuneManager () :
                 json.dump(lectureData, json_file)
     
     # Í∞ïÏùòÎì§ Î¶¨Ïä§Ìä∏
-=======
-                "modelName": self.modelLib[lecture],
-                "trainedList" : self.trainedTree[lecture]
-            }
-                    
-            # lecture_info∏¶ ¿–æÓø¿±‚
-            with open(rf"{full_path}\lecture_info.json", "w") as json_file:
-                json.dump(lectureData, json_file)
-    
-    # ∞≠¿«µÈ ∏ÆΩ∫∆Æ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def LecturesList(self) : 
         return list(self.modelLib.keys())
 
 
-<<<<<<< HEAD
     # Î™®Îç∏ Í∞íÏùÑ Í∞ÄÏ†∏Ïò§Í∏∞
-=======
-    # ∏µ® ∞™¿ª ∞°¡Æø¿±‚
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def GetModel(self, lecture : str) : 
         try :
             modelName : str = self.modelLib[lecture]
         except KeyError as ex :
-<<<<<<< HEAD
             printWarning(f"{lecture}Í≥ºÎ™©ÏùÄ Ï°¥Ïû¨ÌïòÏßÄ ÏïäÏäµÎãàÎã§.")
             return "(Ïú†Ìö®ÌïòÏßÄ ÏïäÏùÄ Í≥ºÎ™©)"
         
@@ -322,29 +199,11 @@ class FineTuneManager () :
 
 
     # ÌååÏù∏ÌäúÎãù Í¥ÄÎ¶¨ Ïä§Î†àÎìú ÏãúÏûë
-=======
-            printWarning(f"{lecture}∞˙∏Ò¿∫ ¡∏¿Á«œ¡ˆ æ Ω¿¥œ¥Ÿ.")
-            return "(¿Ø»ø«œ¡ˆ æ ¿∫ ∞˙∏Ò)"
-        
-        if modelName == None or modelName == "" :
-            printWarning(f"{lecture}¿∫ ∆ƒ¿Œ∆©¥◊ ∏µ®¿Ã ¡∏¿Á«œ¡ˆ æ Ω¿¥œ¥Ÿ. ¥ŸΩ√ «—π¯ »Æ¿Œ«ÿ¡÷Ω Ω√ø¿.")
-            return "gpt-3.5-turbo-1106"
-        
-        printSucceed(f"{lecture}¿« ∆ƒ¿Œ∆©¥◊ ∏µ®({modelName})¿ª √£æ“Ω¿¥œ¥Ÿ.")
-        return modelName
-
-
-    # ∆ƒ¿Œ∆©¥◊ ∞¸∏Æ Ω∫∑πµÂ Ω√¿€
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def StartFineTuneChecker(self) :
         thread_unit = threading.Thread(target=self.__threadFineTuneChecker__, args=[30.]);
         thread_unit.start()
     
-<<<<<<< HEAD
     # ÌååÏù∏ÌäúÎãù Í¥ÄÎ¶¨ Ïä§Î†àÌä∏
-=======
-    # ∆ƒ¿Œ∆©¥◊ ∞¸∏Æ Ω∫∑π∆Æ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def __threadFineTuneChecker__(self, frequency : float) :
         try :
             while True :
@@ -366,11 +225,7 @@ class FineTuneManager () :
         except Exception as ex:   
             printError(ex)     
     def __fineTuneListPrint__(self, ftJobs : list[FineTune], ftFiles : list[FileObject]) :
-<<<<<<< HEAD
         msg = f"<ÌååÏù∏ÌäúÎãù Î™®Îç∏ ÏûëÏóÖ Î™©Î°ù : {len(ftJobs)}Í∞ú>\n"
-=======
-        msg = f"<∆ƒ¿Œ∆©¥◊ ∏µ® ¿€æ˜ ∏Ò∑œ : {len(ftJobs)}∞≥>\n"
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         for job in ftJobs :
             startTime = datetime.fromtimestamp(job.created_at)
                         
@@ -389,11 +244,7 @@ class FineTuneManager () :
                 print()
                 msg += f"\t<{trFile}>\n"
                 
-<<<<<<< HEAD
         msg += f"<ÌïôÏäµ ÌååÏùº Î™©Î°ù : {len(ftFiles)}Í∞ú>\n"        
-=======
-        msg += f"<«–Ω¿ ∆ƒ¿œ ∏Ò∑œ : {len(ftFiles)}∞≥>\n"        
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         for file in ftFiles :
             startTime = datetime.fromtimestamp(file.created_at)
                         
@@ -408,7 +259,6 @@ class FineTuneManager () :
             else :
                 msg += f"[DEFAULT] [{startTime.strftime(timeFormat)}] [{file.id}] FileName : {file.filename}({file.bytes}) \n"
                             
-<<<<<<< HEAD
         msg += "<Î™©Î°ù ÎÅù>\n"
         print(msg)
 
@@ -477,61 +327,10 @@ class FineTuneManager () :
                 ft = openai.fine_tuning.jobs.retrieve(ftJobData.id)
             
                 #ÏãúÏûë ÏãúÍ∞Ñ, Í≤ΩÍ≥ºÎêú Ï¥àÎ•º ÏñªÎäîÎã§.
-=======
-        msg += "<∏Ò∑œ ≥°>\n"
-        print(msg)
-
-
-    # ∆ƒ¿Œ∆©¥◊ Ω√¿€
-    def StartFineTuneJob(self, lectureName : str) :
-        try :
-            printProcess(f"'{lectureName}' ∞˙∏Ò¿« ¿⁄∞° «–Ω¿¿ª ¡ÿ∫Ò ¡ﬂ¿‘¥œ¥Ÿ...")
-        
-            #∏”¡ˆµ•¿Ã≈Õ ª˝º∫ 
-            self.__MergeDataSet__("C# «¡∑Œ±◊∑°π÷")
-        
-            #∏”¡ˆµ•¿Ã≈Õ æ˜∑ŒµÂ
-            fo : FileObject = self.pm.api.UploadFile("C# «¡∑Œ±◊∑°π÷")
-         
-            #∆ƒ¿Œ∆©¥◊ Ω√¿€
-            ftj : FineTuningJob = openai.fine_tuning.jobs.create(model = "gpt-3.5-turbo-1106", training_file = fo.id)
-        
-            # ƒ›πÈ ¡§¿«
-       
-        
-            #∆ƒ¿Œ∆©¥◊ ¿€æ˜ √ﬂ¿˚ Ω∫∑πµÂ ª˝º∫
-            thread_unit : threading.Thread = threading.Thread(target = self.__threadFineTuneJob__, args = (lectureName, ftj,  self.__FineTuneJobCallback__))
-            thread_unit.start()
-            printProcess(f"'{lectureName}' ∞˙∏Ò¿« ¿⁄∞° «–Ω¿¿ª Ω√¿€«’¥œ¥Ÿ.")
-        
-
-            # ∆ƒ¿Œ∆©¥◊ ¿€æ˜ ºº¿Ã∫Í∆˜¿Œ∆Æ ª˝º∫
-            self.__MakeFineTuneCheckPoint__(lecture=lectureName, ft= ftj)
-            
-            return True
-        except :
-            return False
-        
-    # ∆ƒ¿Œ∆©¥◊ Ω∫∑πµÂ
-    def __threadFineTuneJob__(self, lectureName : str, ftJobData : FineTuningJob,  callback) : 
-        
-        ft : FineTuningJob
-        
-        while True :
-            from _240102_OpenAI_API._240102_OpenAI_API.AiProcessSources.ProcessManager import p1, p2
-            try :
-                printProcess(f"'{lectureName}' ∞˙∏Ò¿« ¿⁄∞° «–Ω¿¿Ã ¡¯«‡ ¡ﬂ¿‘¥œ¥Ÿ.")
-            
-                # ∆ƒ¿Œ∆©¥◊ ∞˙¡§ ¡ﬂ ¡§∫∏∏¶ ∞°¡Æø¬¥Ÿ.
-                ft = openai.fine_tuning.jobs.retrieve(ftJobData.id)
-            
-                #Ω√¿€ Ω√∞£, ∞Ê∞˙µ» √ ∏¶ æÚ¥¬¥Ÿ.
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 startTime = datetime.fromtimestamp(ft.created_at)
                 pastTick = int(time.time()) - ft.created_at
                 jobStatus = ft.status       
 
-<<<<<<< HEAD
                 printProcess(f"ÏûêÍ∞ÄÌïôÏäµ Ïì∞Î†àÎìú - Í≥ºÎ™© Î™Ö : {lectureName}\t ÏãúÏûë ÏãúÍ∞Ñ : {startTime}\t Í≤ΩÍ≥º ÏãúÍ∞Ñ : {pastTick}Ï¥à\t ÏßÑÌñâ ÏÉÅÌÉú : {jobStatus}")
                 
                 #Ìï¥ÏπòÏõ†ÎÇò?
@@ -547,28 +346,10 @@ class FineTuneManager () :
                     printError(f"Í≥ºÎ™© Î™Ö : {lectureName}\t ÏãúÏûë ÏãúÍ∞Ñ : {startTime}\t Í≤ΩÍ≥º ÏãúÍ∞Ñ : {pastTick}Ï¥à\t Ï¢ÖÎ£å ÏãúÍ∞Ñ : {pastTick}")
                     
                     #ÏπòÎ™ÖÏ†ÅÏù∏ Ïò§Î•òÏóê ÎåÄÌïú Ï≤òÎ¶¨
-=======
-                printProcess(f"¿⁄∞°«–Ω¿ æ≤∑πµÂ - ∞˙∏Ò ∏Ì : {lectureName}\t Ω√¿€ Ω√∞£ : {startTime}\t ∞Ê∞˙ Ω√∞£ : {pastTick}√ \t ¡¯«‡ ªÛ≈¬ : {jobStatus}")
-                
-                #«ÿƒ°ø¸≥™?
-                if(jobStatus in ["succeeded"]) :
-                    printSucceed(f"º∫∞¯¿˚¿∏∑Œ ¿⁄∞°«–Ω¿¿Ã øœ∑·µ«æ˙Ω¿¥œ¥Ÿ. øœº∫µ» AI¿« ∏µ® ≈∞ : {ft.fine_tuned_model}")
-                    printSucceed(f"∞˙∏Ò ∏Ì : {lectureName}\t Ω√¿€ Ω√∞£ : {startTime}\t ∞Ê∞˙ Ω√∞£ : {ft.finished_at - ft.created_at}√ \t ¡æ∑· Ω√∞£ : {datetime.fromtimestamp(ft.finished_at)}")
-                    callback(lectureName, ft.fine_tuned_model)
-                    break
-                
-                #∏¡«ﬂ≥™?
-                elif (jobStatus in ["failed", "cancelled"]) :
-                    printError(f"¿⁄∞°«–Ω¿ø° Ω«∆–«ﬂΩ¿¥œ¥Ÿ! state : {jobStatus}")
-                    printError(f"∞˙∏Ò ∏Ì : {lectureName}\t Ω√¿€ Ω√∞£ : {startTime}\t ∞Ê∞˙ Ω√∞£ : {pastTick}√ \t ¡æ∑· Ω√∞£ : {pastTick}")
-                    
-                    #ƒ°∏Ì¿˚¿Œ ø¿∑˘ø° ¥Î«— √≥∏Æ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                     self.pm.client.Send(f"FineTuneEnd{p1}{str(False)}{p2}{lectureName}")
                     return
                 
             except Exception as e: 
-<<<<<<< HEAD
                 printError(f"__threadFineTuneJob__ ÏóêÎü¨ : {e}\n{e.with_traceback.format_exc()}")
                 
                 #ÏπòÎ™ÖÏ†ÅÏù∏ Ïò§Î•òÏóê ÎåÄÌïú Ï≤òÎ¶¨
@@ -596,41 +377,11 @@ class FineTuneManager () :
                 
             #ÏÉàÎ°úÏö¥ Î™®Îç∏ Î≥µÎ∂ô
             printProcess(f"ÏÉàÎ°úÏö¥ Î™®Îç∏ {modelName}ÏùÑ Î∞∞ÏπòÌï©ÎãàÎã§.")
-=======
-                printError(f"__threadFineTuneJob__ ø°∑Ø : {e}\n{e.with_traceback.format_exc()}")
-                
-                #ƒ°∏Ì¿˚¿Œ ø¿∑˘ø° ¥Î«— √≥∏Æ
-                self.pm.client.Send(f"FineTuneEnd{p1}{str(False)}{p2}{lectureName}")
-                return 
-              
-            #æ∆¥œæﬂ? ±◊∑≥ π›∫π  
-            sleep(10.)
-        
-        # ∞·∞˙ π›»Ø
-        callback(ft.fine_tuned_model, lectureName)
-    
-    # ∆ƒ¿Œ∆©¥◊ Ω∫∑πµÂ ƒ›πÈ
-    def __FineTuneJobCallback__ (self, lectureName, modelName) : 
-        from _240102_OpenAI_API._240102_OpenAI_API.AiProcessSources.ProcessManager import p1, p2
-        try :
-            # ¿ÃπÃ ∞∞¿∫ ∞™¿Ã ¿÷¿ª Ω√ Ω∫≈µ.
-            if(self.modelLib[lectureName] == modelName) : return;
-        
-            # ±‚¡∏ ∏µ®¿∫ ªË¡¶
-            printProcess(f"{lectureName}¿« ∏µ®¿ª {modelName}∑Œ ±≥√º«’¥œ¥Ÿ.")
-            if(self.modelLib[lectureName] != None) :
-                printProcess(f"±‚¡∏ ∏µ® {self.modelLib[lectureName]}¿ª ¡¶∞≈«’¥œ¥Ÿ...")
-                self.pm.api.DeleteFineTuneModel(self.modelLib[lectureName])
-                
-            #ªı∑ŒøÓ ∏µ® ∫π∫Ÿ
-            printProcess(f"ªı∑ŒøÓ ∏µ® {modelName}¿ª πËƒ°«’¥œ¥Ÿ.")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             self.modelLib[lectureName] = modelName
             self.trainedTree[lectureName] = self.trainingTree[lectureName]
             
             self.LecturesSave()
         
-<<<<<<< HEAD
             # ÎÅùÎÇ¨ÏúºÎãà Ï†ïÏÉÅÏ†ÅÏù∏ Ï¢ÖÎ£å Î∞òÏùë Î≥¥Ïù¥Í∏∞
             self.pm.client.Send(f"FineTuneEnd{p1}{str(True)}{p2}{lectureName}")
             
@@ -650,25 +401,6 @@ class FineTuneManager () :
                 file_content = source_file.read()
 
             # ÏÉàÎ°úÏö¥ ÎîîÎ†âÌÜ†Î¶¨Ïóê ÌÖçÏä§Ìä∏ ÌååÏùº ÏÉùÏÑ±ÌïòÍ≥† ÎÇ¥Ïö© Î≥µÏÇ¨
-=======
-            # ≥°≥µ¿∏¥œ ¡§ªÛ¿˚¿Œ ¡æ∑· π›¿¿ ∫∏¿Ã±‚
-            self.pm.client.Send(f"FineTuneEnd{p1}{str(True)}{p2}{lectureName}")
-            
-        except Exception as ex:
-            # ∫Ò¡§ªÛ¿˚¿Œ ¡æ∑·ø° ¥Î«ÿ π›¿¿ ∫∏¿Ã±‚
-            printError(f"∆ƒ¿Œ∆©¥◊ ƒ›πÈø°º≠ ø¿∑˘ πﬂª˝ : {ex}\n{ex.with_traceback.format_exc()}")
-            self.pm.client.Send(f"FineTuneEnd{p1}{str(False)}{p2}{lectureName}")
-
-
-    # ∑ŒøÏ µ•¿Ã≈Õ∏¶ ∆–æ≤∏¶ ≈Î«ÿ ∫πªÁ«ÿ ø…¥œ¥Ÿ. txt > txt
-    def AddRawData(self, lecture : str, txtFilePath : str) : 
-        try:
-            # ≈ÿΩ∫∆Æ ∆ƒ¿œ¿« ≥ªøÎ ¿–æÓø¿±‚
-            with open(txtFilePath, "r", encoding ="utf-8") as source_file:
-                file_content = source_file.read()
-
-            # ªı∑ŒøÓ µ∑∫≈‰∏Æø° ≈ÿΩ∫∆Æ ∆ƒ¿œ ª˝º∫«œ∞Ì ≥ªøÎ ∫πªÁ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             file_name = os.path.basename(txtFilePath)
             destination_path = rf"{self.__lectureToPath__(lecture)}\RAW_DATA\{file_name}"
 
@@ -679,7 +411,6 @@ class FineTuneManager () :
                 self.trainingTree[lecture].append(file_name);
             self.LecturesSave();
             
-<<<<<<< HEAD
             printSucceed(f"Î°úÏö∞ Îç∞Ïù¥ÌÑ∞Î•º Ï∂îÍ∞Ä ÏôÑÎ£å: {destination_path}")
             return True;
     
@@ -700,24 +431,6 @@ class FineTuneManager () :
         try:
             
             # ÏÉàÎ°úÏö¥ ÎîîÎ†âÌÜ†Î¶¨Ïóê ÌÖçÏä§Ìä∏ ÌååÏùº ÏÉùÏÑ±ÌïòÍ≥† ÎÇ¥Ïö© Î≥µÏÇ¨
-=======
-            printSucceed(f"∑ŒøÏ µ•¿Ã≈Õ∏¶ √ﬂ∞° øœ∑·: {destination_path}")
-            return True;
-    
-        except FileNotFoundError:
-            printError(f"∑ŒøÏ µ•¿Ã≈Õ∏¶ √ﬂ∞°«œ¡ˆ ∏¯¡ôΩ¿¥œ¥Ÿ. «ÿ¥Á ∆ƒ¿œ¿ª √£¿ª ºˆ æ¯Ω¿¥œ¥Ÿ. {txtFilePath}")
-            return False;
-        
-        except Exception as e:
-            printError(f"∑ŒøÏ µ•¿Ã≈Õ √ﬂ∞° ¡ﬂ, ø¿∑˘ πﬂª˝: <{txtFilePath}> {e}")
-            return False;
-
-    # pdf > txt
-    def AddPdfData(self, lecture : str, pdfFilePath : str) : 
-        try:
-            
-            # ªı∑ŒøÓ µ∑∫≈‰∏Æø° ≈ÿΩ∫∆Æ ∆ƒ¿œ ª˝º∫«œ∞Ì ≥ªøÎ ∫πªÁ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             file_name = os.path.basename(pdfFilePath).replace('.pdf','')
             destination_path = rf"{self.__lectureToPath__(lecture)}\RAW_DATA\{file_name}.txt"
 
@@ -728,7 +441,6 @@ class FineTuneManager () :
                 self.trainingTree[lecture].append(file_name);
             self.LecturesSave();
             
-<<<<<<< HEAD
             printSucceed(f"Î°úÏö∞ Îç∞Ïù¥ÌÑ∞Î•º Ï∂îÍ∞Ä ÏôÑÎ£å: {destination_path}")
             return True;
     
@@ -849,40 +561,10 @@ class FineTuneManager () :
         dataSetPath : str = fr"{self.__lectureToPath__(lecture)}\TRAINING_DATA\{txtFileName}.jsonl"
         
         printSucceed(f"Î°úÏö∞ Îç∞Ïù¥ÌÑ∞ÏóêÏÑú GPTÎ•º Ïù¥Ïö©Ìï¥ ÌïôÏäµ Îç∞Ïù¥ÌÑ∞Î•º Ï∂îÏ∂úÌïòÎäîÎç∞ ÏÑ±Í≥µÌñàÏäµÎãàÎã§ ÎåÄÏÉÅ ÌååÏùº : {dataSetPath}...")
-=======
-            printSucceed(f"∑ŒøÏ µ•¿Ã≈Õ∏¶ √ﬂ∞° øœ∑·: {destination_path}")
-            return True;
-    
-        except FileNotFoundError:
-            printError(f"∑ŒøÏ µ•¿Ã≈Õ∏¶ √ﬂ∞°«œ¡ˆ ∏¯¡ôΩ¿¥œ¥Ÿ. «ÿ¥Á ∆ƒ¿œ¿ª √£¿ª ºˆ æ¯Ω¿¥œ¥Ÿ. {pdfFilePath}")
-            return False;
-        
-        except Exception as e:
-            printError(f"∑ŒøÏ µ•¿Ã≈Õ √ﬂ∞° ¡ﬂ, ø¿∑˘ πﬂª˝: {pdfFilePath} - {e}")
-            return False;
-        
-  
-         
-    # ∞°¡Æø¬ ∑ŒøÏ µ•¿Ã≈Õ∑Œ GPT ∏¶ ªÁøÎ«ÿ «–Ω¿ µ•¿Ã≈Õ∑Œ ∏∏µÏ¥œ¥Ÿ. txt > json
-    def __MakeDataSet__(self, lecture : str, txtFilePath : str) : 
-        
-        printProcess(f"∑ŒøÏ µ•¿Ã≈Õø°º≠ GPT∏¶ ¿ÃøÎ«ÿ «–Ω¿ µ•¿Ã≈Õ∏¶ √ﬂ√‚«’¥œ¥Ÿ...  ¥ÎªÛ ∆ƒ¿œ : {txtFilePath}...")
-        
-        api = self.pm.api;
-        #«–Ω¿ ≥ªøÎ √ﬂ√‚
-        dataSet : list = api.InitDataSet(lecture, txtFilePath);
-        
-        # ¿˙¿Â«“ ≈ÿΩ∫∆Æ jsonl
-        txtFileName = os.path.basename(txtFilePath).replace(".txt", "")
-        dataSetPath : str = fr"{self.__lectureToPath__(lecture)}\TRAINING_DATA\{txtFileName}.jsonl"
-        
-        printSucceed(f"∑ŒøÏ µ•¿Ã≈Õø°º≠ GPT∏¶ ¿ÃøÎ«ÿ «–Ω¿ µ•¿Ã≈Õ∏¶ √ﬂ√‚«œ¥¬µ• º∫∞¯«ﬂΩ¿¥œ¥Ÿ ¥ÎªÛ ∆ƒ¿œ : {dataSetPath}...")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         
         with open(dataSetPath, "w", encoding = "utf-8") as json_file:
             json_file.write(json.dumps(dataSet, ensure_ascii=False))
     
-<<<<<<< HEAD
     # Í≥ºÎ™© ÏïàÏùò ÎØ∏Ï≤ò ÏôÑÎ£åÎêòÏßÄ ÏïäÏùÄ Î™®Îì† Î°úÏö∞ Îç∞Ïù¥ÌÑ∞Î•º Ï†ïÏ†úÌïúÎã§.
     def __MakeDataSetWhole__(self, lecture : str) :
         printProcess("ÎØ∏Ï≤ò ÏôÑÎ£åÎêòÏßÄ ÏïäÏùÄ Î°úÏö∞Îç∞Ïù¥ÌÑ∞Î•º Ï∞æÏäµÎãàÎã§.")  
@@ -931,38 +613,21 @@ class FineTuneManager () :
     def __MergeDataSet__(self, lecture : str) : 
         
         printProcess(f"'{lecture}'Í≥ºÎ™©Ïùò ÌÜµÌï© Îç∞Ïù¥ÌÑ∞ ÏÉùÏÑ±ÏùÑ ÏãúÏûëÌï©ÎãàÎã§... ")
-=======
-    # «ÿ¥Á ∞≠¡¬¿« ∏µÁ µ•¿Ã≈Õº¬¿ª «œ≥™∑Œ «’√ƒ æ˜∑ŒµÂ∏¶ ¡ÿ∫Ò«’¥œ¥Ÿ. json, json... > jsonl
-    def __MergeDataSet__(self, lecture : str) : 
-        
-        printProcess(f"'{lecture}'∞˙∏Ò¿« ≈Î«’ µ•¿Ã≈Õ ª˝º∫¿ª Ω√¿€«’¥œ¥Ÿ... ")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         
         lecPath = self.__lectureToPath__(lecture);        
         trainingFileDir = rf"{lecPath}\TRAINING_DATA"
 
         jsonl_contents = []
 
-<<<<<<< HEAD
         # ÎîîÎ†âÌÜ†Î¶¨ ÎÇ¥Î∂ÄÏùò ÌååÏùºÎì§ Í∞ÄÏ†∏Ïò§Í∏∞
         files = [f for f in os.listdir(trainingFileDir) if os.path.isfile(os.path.join(trainingFileDir, f))]
 
         # JSONL ÌååÏùºÎì§Ïóê ÎåÄÌï¥ Î∞òÎ≥µ
-=======
-        # µ∑∫≈‰∏Æ ≥ª∫Œ¿« ∆ƒ¿œµÈ ∞°¡Æø¿±‚
-        files = [f for f in os.listdir(trainingFileDir) if os.path.isfile(os.path.join(trainingFileDir, f))]
-
-        # JSONL ∆ƒ¿œµÈø° ¥Î«ÿ π›∫π
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         for file_name in files: 
             if file_name.endswith('.jsonl'):
                 jsonlPath = os.path.join(trainingFileDir, file_name)
                 with open(jsonlPath, 'r', encoding='utf-8') as jsonl_file:
-<<<<<<< HEAD
                     # ÌååÏùº ÎÇ¥Ïö© ÏùΩÏñ¥Ïò§Í∏∞
-=======
-                    # ∆ƒ¿œ ≥ªøÎ ¿–æÓø¿±‚
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                     file_content = jsonl_file.read()
                     dataList = json.loads(file_content)
                     jsonl_contents.extend([data for data in dataList])
@@ -975,25 +640,15 @@ class FineTuneManager () :
             for item in jsonl_contents:
                 json_file.write(json.dumps(item, ensure_ascii=False) + '\n')
             
-<<<<<<< HEAD
         printSucceed(f"'{lecture}'Í≥ºÎ™©Ïùò ÌÜµÌï© Îç∞Ïù¥ÌÑ∞Î•º ÏÉùÏÑ±ÌïòÎäîÎç∞Ïóê ÏÑ±Í≥µÌñàÏäµÎãàÎã§. Í≤ΩÎ°ú : {dataSetPath}")
     
     # Í≥ºÎ™© Ïù¥Î¶ÑÏúºÎ°ú Îπ†Î•∏ Í≤ΩÎ°ú Ï∞æÍ∏∞
-=======
-        printSucceed(f"'{lecture}'∞˙∏Ò¿« ≈Î«’ µ•¿Ã≈Õ∏¶ ª˝º∫«œ¥¬µ•ø° º∫∞¯«ﬂΩ¿¥œ¥Ÿ. ∞Ê∑Œ : {dataSetPath}")
-    
-    # ∞˙∏Ò ¿Ã∏ß¿∏∑Œ ∫¸∏• ∞Ê∑Œ √£±‚
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def __lectureToPath__(self, lecture : str) :
         filePath : str = f"{self.rootPath}\\{lecture}"
         return filePath 
     
     
-<<<<<<< HEAD
     # ÌååÏù∏ÌäúÎãù Ïû° ÏÑ∏Ïù¥Î∏åÌè¨Ïù∏Ìä∏ ÏÉùÏÑ±
-=======
-    # ∆ƒ¿Œ∆©¥◊ ¿‚ ºº¿Ã∫Í∆˜¿Œ∆Æ ª˝º∫
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def __MakeFineTuneCheckPoint__(self, lecture : str, ft : FineTuningJob) : 
         user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
         saveDirectory = "WB38"
@@ -1009,41 +664,26 @@ class FineTuneManager () :
         with open(cpPath, "w", encoding="utf-8") as jsonFile :
             json.dump(dataPre, jsonFile, ensure_ascii=False)
             
-<<<<<<< HEAD
         printSucceed(f"'{lecture}' Í≥ºÎ™©Ïùò ÏûêÍ∞Ä ÌïôÏäµ ÏÑ∏Ïù¥Î∏åÌè¨Ïù∏Ìä∏Î•º Ï†ÄÏû•ÌóÄÏäµÎãàÎã§!")
         
     # ÌååÏù∏ÌäúÎãù Ïû° ÏÑ∏Ïù¥Î∏å Ìè¨Ïù∏Ìä∏ Î°úÎìú. Ï†ÅÌï©Ìïú ÌååÏù∏ÌäúÎãù Ïû°Ïù¥ ÏûàÏùÑ Ïãú, Ïä§Î†àÎìú Ïû¨ÏÉùÏÑ±
-=======
-        printSucceed(f"'{lecture}' ∞˙∏Ò¿« ¿⁄∞° «–Ω¿ ºº¿Ã∫Í∆˜¿Œ∆Æ∏¶ ¿˙¿Â¡ôΩ¿¥œ¥Ÿ!")
-        
-    # ∆ƒ¿Œ∆©¥◊ ¿‚ ºº¿Ã∫Í ∆˜¿Œ∆Æ ∑ŒµÂ. ¿˚«’«— ∆ƒ¿Œ∆©¥◊ ¿‚¿Ã ¿÷¿ª Ω√, Ω∫∑πµÂ ¿Áª˝º∫
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     def __LoadFineTuneCheckPoint__(self) : 
         try : 
             user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
             saveDirectory = "WB38"
             cpPath = f"{user_documents_path}\\{saveDirectory}\\finetune_checkpoint.json"
             
-<<<<<<< HEAD
             # ÏÑ∏Ïù¥Î∏å Ìè¨Ïù∏Ìä∏ Î°úÎìú
-=======
-            # ºº¿Ã∫Í ∆˜¿Œ∆Æ ∑ŒµÂ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             dataPre : list
             with open(cpPath, "r", encoding="utf-8") as jsonFile :
                 dataPre = json.load(jsonFile)
         
-<<<<<<< HEAD
             # APIÏùò ÏßÑÌñâÏ§ëÏù∏ Ïû°Îì§ÏùÑ Î°úÎìú
-=======
-            # API¿« ¡¯«‡¡ﬂ¿Œ ¿‚µÈ¿ª ∑ŒµÂ
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             from ApiManager import OpenAiManagerV2 
             api : OpenAiManagerV2 = self.pm.api;
             ftData, files = api.GetFineTuneData()
             ftJobs : list[FineTuningJob] = ftData.data
     
-<<<<<<< HEAD
             # ÏÑ∏Ïù¥Î∏å Ìè¨Ïù∏Ìä∏Îì§ÏùÑ ÏàúÌöåÌïòÎ©∞ ÏßÑÌñâÏ§ëÏù∏ Ïû°Îì§ÏùÑ ÌôïÏù∏
 
             for data in  dataPre : # ÏÑ∏Ïù¥Î∏åÌè¨Ïù∏Ìä∏ ÏàúÌöå
@@ -1109,34 +749,3 @@ class FineTuneManager () :
         except Exception as ex : 
             printError(f"__CheckFineTuneAvailable__ Ïã§Ìñâ Ï§ë Ïò§Î•òÎ∞úÏÉù. {ex}\n{ex.with_traceback.format_exc()}")
                 
-=======
-            # ºº¿Ã∫Í ∆˜¿Œ∆ÆµÈ¿ª º¯»∏«œ∏Á ¡¯«‡¡ﬂ¿Œ ¿‚µÈ¿ª »Æ¿Œ
-
-            for data in  dataPre : # ºº¿Ã∫Í∆˜¿Œ∆Æ º¯»∏
-            
-                lecture : str = data["lecture"]
-                ftId : str = data["fineTuneJob"]
-            
-                for ftJob in ftJobs : # ∆ƒ¿Œ∆©¥◊ ¿‚ º¯»∏
-                    if(ftJob.id == ftId) :  # ºº¿Ã∫Í∆˜¿Œ∆ÆøÕ ¿œƒ°
-                        if(ftJob.status in ["failed", "cancelled"]) : #¿Ø»ø«œ¡ˆ æ ¿∫ ∆ƒ¿Œ∆©¥◊ ¿‚
-                            printError(f"'{lecture}' ∞˙∏Ò¿« ºº¿Ã∫Í∆˜¿Œ∆Æ∏¶ ∫“∑Øø¿¥¬µ• Ω«∆–«ﬂΩ¿¥œ¥Ÿ. state : {ftJob.status}")
-                            break;
-        
-                        #∆ƒ¿Œ∆©¥◊ ¿€æ˜ √ﬂ¿˚ Ω∫∑πµÂ ª˝º∫
-                        thread_unit : threading.Thread = threading.Thread(target = self.__threadFineTuneJob__, args = (lecture, ftJob, self.__FineTuneJobCallback__))
-                        thread_unit.start()
-                        printSucceed(f"'{lecture}' ∞˙∏Ò¿« ¿⁄∞° «–Ω¿ ºº¿Ã∫Í∆˜¿Œ∆Æ∏¶ ∫“∑Øø‘Ω¿¥œ¥Ÿ!")
-            
-            with open(cpPath, "w", encoding="utf-8") as jsonFile :
-                json.dump([], jsonFile, ensure_ascii=False)
-                
-        except FileNotFoundError as ex :
-            printWarning(f" finetune_checkpoint.json ∆ƒ¿œ¿Ã ¡∏¿Á«œ¡ˆ æ Ω¿¥œ¥Ÿ. ªı∑Œ ª˝º∫«’¥œ¥Ÿ. ")
-            with open(cpPath, "w", encoding="utf-8") as jsonFile :
-                json.dump([], jsonFile, ensure_ascii=False)
-            
-        except Exception as ex : 
-            printError(f"__LoadFineTuneCheckPoint__ Ω««‡ ¡ﬂ ø¿∑˘πﬂª˝. {ex}\n{ex.with_traceback.format_exc()}")
-               
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2

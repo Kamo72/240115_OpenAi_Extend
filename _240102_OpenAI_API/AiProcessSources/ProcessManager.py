@@ -2,24 +2,16 @@
 import hashlib
 import ctypes
 import sys
-<<<<<<< HEAD
 import threading
 from time import sleep
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
 from ApiManager import OpenAiManagerV2
 from SessionManager import SessionManagerV2
 from FineTuneManager import FineTuneManager
 from Addon.ServerAndClient import Server, Client
 
-<<<<<<< HEAD
 import GlobalReference 
 from _240102_OpenAI_API.AiProcessSources.ApiManager import printError, printSucceed, printWarning
-=======
-import _240102_OpenAI_API.GlobalReference as GlobalReference
-from _240102_OpenAI_API._240102_OpenAI_API.AiProcessSources.ApiManager import printError, printSucceed, printWarning
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
 p1 = GlobalReference.PARSER[0]
 p2 = GlobalReference.PARSER[1]
@@ -51,11 +43,7 @@ class ProcessManager() :
         ctypes.windll.kernel32.SetConsoleTitleW("AiEnviormentTerminal")
         
         # 클라이언트 생성
-<<<<<<< HEAD
         self.client : Client = Client("127.0.0.1", 4090, self.__ClientDel__)
-=======
-        self.client : Client = Client("127.0.0.1", 4090, self.__ClientDel)
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     
         # 클라이언트 연결
         self.client.Connect()
@@ -63,11 +51,7 @@ class ProcessManager() :
         # 클라이언트가 입력 받을 준비가 되었다고 전송
         self.client.Send(f"ProcessStart{p1}")
         
-<<<<<<< HEAD
     def __ClientDel__(self, packet) :
-=======
-    def __ClientDel(self, packet) :
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         
         sp = packet.split(p1)
         flag = sp[0]
@@ -113,7 +97,6 @@ class ProcessManager() :
                     self.client.Send(f"SendDataPdf{p1}{str(ret)}{p2}{lecture}{p2}{path}")
                 
                 case "SendDataWav":
-<<<<<<< HEAD
                     ssp = sp[1].split(p2)
                     lecture = ssp[0]
                     path = ssp[1]
@@ -137,9 +120,6 @@ class ProcessManager() :
                         
                     tu = threading.Thread(target=thr);
                     tu.start();
-=======
-                    printError(f"SendDataWav이 아직 구현되지 않았습니다. recieve : {packet}")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 
                 case "SendDataTxt": 
                     ssp = sp[1].split(p2)
@@ -152,10 +132,7 @@ class ProcessManager() :
                 case "FineTuneCreate":
                     ssp = sp[1].split(p2)
                     lecture = ssp[0]
-<<<<<<< HEAD
                     
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                     ret = self.ft.StartFineTuneJob(lecture)
                 
                     self.client.Send(f"FineTuneCreate{p1}{str(ret)}{p2}{lecture}")
@@ -188,14 +165,10 @@ class ProcessManager() :
                 
                     def __callbackFun__(sid, lecture, answer) :
                         printSucceed(f"질문에 대한 답변 생성 ({sid}/{lecture}) \n[Quesetion] : {question} \n[Answer] : {answer}")
-<<<<<<< HEAD
                         imgRoot : str = self.ft.FindSimilarity(lecture, question)                         
 
                         printSucceed(f"유사도 높은 이미지 ({sid}/{lecture}) \n[image] : {imgRoot}")
                         self.client.Send(f"GetAnswer{p1}{sid}{p2}{lecture}{p2}{answer}{p2}{'None' if imgRoot == None else imgRoot}")
-=======
-                        self.client.Send(f"GetAnswer{p1}{sid}{p2}{lecture}{p2}{answer}")
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                     
                     self.api.InitRequest(sid, lecture, question, callback=__callbackFun__)
             
@@ -246,7 +219,6 @@ class ProcessManager() :
         # self.api.InitRequest(4, "C# 프로그래밍", "C#의 주석 기능에 대해 설명해줘.",
         #                      lambda sid, lecture, response : print(f"[{str(sid)}번 사용자의 '{lecture}' 과목에 대한 질문에 대한 응답] : {response}"))
 
-<<<<<<< HEAD
 if __name__ == "__main__":
     pm : ProcessManager = ProcessManager(SessionManagerV2(), OpenAiManagerV2(), FineTuneManager())
     # pm.ft.StartFineTuneJob("C# 프로그래밍")
@@ -256,7 +228,3 @@ if __name__ == "__main__":
 
 
 
-=======
-pm : ProcessManager = ProcessManager(SessionManagerV2(), OpenAiManagerV2(), FineTuneManager())
-del pm;
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2

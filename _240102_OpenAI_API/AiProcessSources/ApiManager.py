@@ -1,8 +1,5 @@
 # -*- coding: cp949 -*-
-<<<<<<< HEAD
 from email.mime import nonmultipart
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 import json,os, threading
 from time import sleep
 
@@ -380,7 +377,6 @@ class OpenAiManagerV2 :
         return retBuffer
         
 
-<<<<<<< HEAD
     # PPT 라벨링 요청 스레드
     def __PptLabelingResponse__(self, lectureName : str, imageName : str, description : str, callback):
         try :
@@ -469,8 +465,6 @@ class OpenAiManagerV2 :
 
 
 
-=======
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     # 파일에서 텍스트를 청크로 잘라 리스트로 가져옴
     def __readSplit__(self, file_path, chunkSize):
         result_list = []
@@ -484,7 +478,6 @@ class OpenAiManagerV2 :
    
     # openai api에 파일 업로드
     def UploadFile(self, lecture) : 
-<<<<<<< HEAD
         try :
             user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
             saveDirectory = "WB38\\Lectures"
@@ -502,18 +495,6 @@ class OpenAiManagerV2 :
         except Exception as ex :
             print(ex);
             return None
-=======
-
-        user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
-        saveDirectory = "WB38\\Lectures"
-        path = rf"{user_documents_path}\{saveDirectory}\{lecture}\MERGED_DATASET\{lecture}_MERGED.jsonl"        
-
-        fo : FileObject = openai.files.create(
-            file = open(path, "rb"),
-            purpose = "fine-tune"
-        )
-        return fo
->>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
     # 진행중인 파인 튜닝 잡과 업로드된 파일들을 조회
     def GetFineTuneData(self) : 
