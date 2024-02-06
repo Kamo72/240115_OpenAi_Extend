@@ -42,7 +42,11 @@ class AiModuleProcess():
                 case "ProcessStart": 
                     self.clientIsAvailable = True;
             
+<<<<<<< HEAD
+                case "ProcessEnd":
+=======
                 case "ProcessEnd ":
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                     ssp = sp[1].split(p2)
                     isSucceed = True if ssp[0] == str(True) else False
                     if isSucceed :
@@ -79,6 +83,20 @@ class AiModuleProcess():
 
                     printSucceed(ret)
                 
+<<<<<<< HEAD
+                case "SendDataPpt": 
+                    ssp = sp[1].split(p2)
+                    isSucceed = True if ssp[0] == str(True) else False
+                    lecture = ssp[1]
+                    path = ssp[2]
+                    
+                    if isSucceed :
+                        printSucceed(f"성공적으로 '{path}' PPT파일을 '{lecture}'과목을 업로드했습니다.")
+                    else:
+                        printError(f"'{path}' PPT파일을 '{lecture}'과목에 업로드하는데 실패했습니다.")
+                        
+=======
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 case "SendDataPdf": 
                     ssp = sp[1].split(p2)
                     isSucceed = True if ssp[0] == str(True) else False
@@ -91,15 +109,19 @@ class AiModuleProcess():
                         printError(f"'{path}' PDF파일을 '{lecture}'과목에 업로드하는데 실패했습니다.")
                 
                 case "SendDataWav":
+<<<<<<< HEAD
                     ssp = sp[1].split(p2)
                     isSucceed = True if ssp[0] == str(True) else False
-                    lecture = ssp[1]
+                    lecture = ssp[1]    
                     path = ssp[2]
                     
                     if isSucceed :
                         printSucceed(f"성공적으로 '{path}' 음성 파일을 '{lecture}'과목을 업로드했습니다.")
                     else:
                         printError(f"'{path}' 음성 파일을 '{lecture}'과목에 업로드하는데 실패했습니다.")
+=======
+                    printError(f"SendDataWav이 아직 구현되지 않았습니다. recieve : {packet}")
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
                 
                 case "SendDataTxt": 
                     ssp = sp[1].split(p2)
@@ -155,8 +177,14 @@ class AiModuleProcess():
                     sid = ssp[0]
                     lecture = ssp[1]
                     answer = ssp[2]
+<<<<<<< HEAD
+                    image = ssp[3]
+                
+                    printSucceed(f"['{sid}' 사용자의 '{lecture}' 응답] : {answer}\n [image]{image}")
+=======
                 
                     printSucceed(f"['{sid}' 사용자의 '{lecture}' 응답] : {answer}")
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
             
                 case _:
                     if flag == "" : return;
@@ -267,7 +295,11 @@ class AiModuleProcess():
         printNor("테스트 코드로 기능을 확인을 마쳤습니다...")
         
     # 디버그용 Q and A
+<<<<<<< HEAD
+    def ExecuteTestQandA(self, lecture : str) :
+=======
     def ExecuteTestQandA(self) :
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         # 기타 변수들을 짧게 처리
         p1 = self.p1
         p2 = self.p2
@@ -276,7 +308,11 @@ class AiModuleProcess():
         
         #간단한 질문과 응답
         sid = 0;
+<<<<<<< HEAD
+        lectureName = lecture
+=======
         lectureName = "박상한의 케로로학"
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     
         while True :
             inputText = input(f"(sid : {sid})의 ({lectureName} 과목) 질문 : ")
@@ -331,6 +367,17 @@ class AiModuleProcess():
         server = self.server;
         
         server.Send(f"SessionDelete{p1}{sid}{p2}{lecture}")
+<<<<<<< HEAD
+            
+    def DoSendDataPpt(self, lecture : str, path : str) :
+        # 기타 변수들을 짧게 처리
+        p1 = self.p1
+        p2 = self.p2
+        server = self.server;
+        
+        server.Send(f"SendDataPpt{p1}{lecture}{p2}{path}")
+=======
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
         
     def DoSendDataPdf(self, lecture : str, path : str) :
         # 기타 변수들을 짧게 처리
@@ -347,6 +394,7 @@ class AiModuleProcess():
         server = self.server;
         
         server.Send(f"SendDataTxt{p1}{lecture}{p2}{path}")
+<<<<<<< HEAD
         
     def DoSendDataWav(self, lecture : str, path : str) :
         # 기타 변수들을 짧게 처리
@@ -355,6 +403,8 @@ class AiModuleProcess():
         server = self.server;
         
         server.Send(f"SendDataWav{p1}{lecture}{p2}{path}")
+=======
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     
     def DoFineTuneCreate(self, lecture : str) :
         # 기타 변수들을 짧게 처리

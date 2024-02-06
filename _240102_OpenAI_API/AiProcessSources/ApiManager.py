@@ -1,5 +1,8 @@
 # -*- coding: cp949 -*-
+<<<<<<< HEAD
 from email.mime import nonmultipart
+=======
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 import json,os, threading
 from time import sleep
 
@@ -377,6 +380,97 @@ class OpenAiManagerV2 :
         return retBuffer
         
 
+<<<<<<< HEAD
+    # PPT 라벨링 요청 스레드
+    def __PptLabelingResponse__(self, lectureName : str, imageName : str, description : str, callback):
+        try :
+            labelingSession = []
+            labelingSession.append({
+                                    "role" : "system",
+                                    "content" : "너는 강의 자료 ppt의 슬라이드 내의 텍스트를 요약해주는 도우미야."
+                                })    
+            
+            labelingSession.append({
+                                    "role" : "user",
+                                    "content" : f"아래는 슬라이드 내에 있는 문자열 들이야.\n\n{description}\n\n 해당 문자열들을 정리해서 문장으로 요약해서 반환해줘."
+                                })  
+            #API로 답변을 요청
+            completion : ChatCompletion = self.client.chat.completions.create(
+                model="gpt-3.5-turbo-1106",
+                temperature=0.3,
+                messages = labelingSession,
+                max_tokens= 4000,
+                frequency_penalty= 0.3,
+                presence_penalty= 0.3,
+            )
+
+            #반환할 문자열에 저장
+            datasetResponse = completion.choices[0].message.content
+                
+        except openai.BadRequestError as ex:
+            print(f"예외발생 BadRequestError : {ex}");
+            responseAnswer = ex  
+            print(ex.__traceback__.format_exc())
+        except Exception as ex:
+            print(f"예외발생 Exception : {ex}");
+            
+            # 너무 잦은 요청 시, 지연 후 다시 실행.
+            if(str(ex).__contains__("429") or str(ex).__contains__("697")) :
+                printWarning("짧은 시간 내에 너무 많은 요청을 시도하고 있습니다. 5초 후 다시 실행합니다...")
+                sleep(5.)
+                self.__NormalRequestResponse__(sid, lectureName, requestQuestion, callback)
+                return
+            
+            # 모델을 찾을 수 없을 시, 기본 모델로 변경 
+            elif(str(ex).__contains__("404")) :
+                if(str(ex).__contains__("model_not_found")) :
+                    printError("해당 과목의 모델이 더이상 존재하지 않거나 유효하지 않습니다! 해당 과목을 기초 모델로 초기화합니다...")
+                    import FineTuneManager
+                    ft : FineTuneManager.FineTuneManager = self.pm.ft;
+                    ft.modelLib[lectureName] = None;
+                    ft.LecturesSave()
+                    self.__NormalRequestResponse__(sid, lectureName, requestQuestion, callback)
+                    return
+            
+            responseAnswer = ex
+            print(ex.__traceback__.format_exc())
+            
+        callback(imageName, datasetResponse)
+    
+    # PPT 라벨링 요청
+    def InitPptLabeling(self, lectureName : str, pairs : dict[str, str]) :
+        
+        dataSetDict : dict[str, str] = {}
+
+        thrList : list[threading.Thread] = list[threading.Thread]()
+        for key, value in pairs.items() : 
+            thread_instance = threading.Thread(
+                target=self.__PptLabelingResponse__,
+                args=(lectureName, key, value,
+                            lambda img, label : {
+                                dataSetDict.update({img : label}),
+                                printProcess(f"이미지 라벨링 중 {len(dataSetDict)}/{len(pairs)}\n{img} >> {label}")
+                            }
+                    )
+                )        
+            
+            thread_instance.start();
+            thrList.append(thread_instance);
+            sleep(5.);
+         
+        # 모든 요청이 끝날 때까지 기다리기
+        for thr in thrList :
+            thr.join()
+            sleep(1)
+            
+        printSucceed(f"이미지 라벨링 완료! 라벨링된 이미지 수 : {len(dataSetDict)}개")
+        return dataSetDict
+
+
+
+
+=======
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
     # 파일에서 텍스트를 청크로 잘라 리스트로 가져옴
     def __readSplit__(self, file_path, chunkSize):
         result_list = []
@@ -390,6 +484,7 @@ class OpenAiManagerV2 :
    
     # openai api에 파일 업로드
     def UploadFile(self, lecture) : 
+<<<<<<< HEAD
         try :
             user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
             saveDirectory = "WB38\\Lectures"
@@ -407,6 +502,18 @@ class OpenAiManagerV2 :
         except Exception as ex :
             print(ex);
             return None
+=======
+
+        user_documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
+        saveDirectory = "WB38\\Lectures"
+        path = rf"{user_documents_path}\{saveDirectory}\{lecture}\MERGED_DATASET\{lecture}_MERGED.jsonl"        
+
+        fo : FileObject = openai.files.create(
+            file = open(path, "rb"),
+            purpose = "fine-tune"
+        )
+        return fo
+>>>>>>> d94f2c40e5cb315f1f1f5786c865b0c286ea70c2
 
     # 진행중인 파인 튜닝 잡과 업로드된 파일들을 조회
     def GetFineTuneData(self) : 

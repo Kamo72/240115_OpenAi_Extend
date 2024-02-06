@@ -28,7 +28,7 @@ class SpeechToTextConverter() :
 
         new_blob = self.sttBucket.blob(current_time_str + file_extension)
 
-        new_blob.upload_from_filename(source_file)
+        new_blob.upload_from_filename(source_file, num_retries=30, timeout=3600.)
         
         bucket_name = "kamos_speech_to_text"
         
@@ -45,15 +45,16 @@ class SpeechToTextConverter() :
         audio = speech.RecognitionAudio(uri=gcs_uri)
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.MP3,
-            sample_rate_hertz= 48000,
+            sample_rate_hertz= 44000,
+            audio_channel_count = 1,
             language_code="ko-KR", 
         )
 
         operation = sttClient.long_running_recognize(config=config, audio=audio)
 
         printProcess("SpeechToText 작업을 시작합니다...")
-        response = operation.result(timeout=3600)
-
+        response = operation.result(timeout=36000)
+        
         transcript_builder = []
         # Each result is for a consecutive portion of the audio. Iterate through
         # them to get the transcripts for the entire audio file.
